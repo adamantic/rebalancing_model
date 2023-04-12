@@ -10,7 +10,7 @@ today = dt.date.today()
 # Initialize variables
 stock1 = 'TQQQ'
 stock2 = 'BIL'
-weight1 = 0.8
+weight1 = 0.75
 start_date = pd.Timestamp('2000-03-01')
 end_date = pd.Timestamp(today)
 
@@ -52,6 +52,15 @@ portfolio_value_df = pd.DataFrame(portfolio_value, index=ohlc_data.index, column
 stock1_returns = (1 + ohlc_data[stock1].pct_change()).cumprod()
 stock1_normalized = initial_value * stock1_returns
 
+# Plot the portfolio value and the amounts of the two tickers
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(portfolio_value_df.index, portfolio_value_df['Portfolio Value'], label='Portfolio Value')
+#ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
+ax.set_xlabel('Date')
+ax.set_ylabel('Price')
+ax.legend()
+
+
 # Calculate Stock1 stats
 stock1_normalized = stock1_normalized.iloc[1:]  # Drop the first row to avoid division by zero
 
@@ -79,13 +88,14 @@ initial_stock1_value = stock1_normalized.iloc[0]
 ending_stock1_value = stock1_normalized.iloc[-1]
 stock1_total_return = (ending_stock1_value / initial_stock1_value) - 1
 
+"""
 print(stock1, "Stats")
 print(f"Total Return: {stock1_total_return:.0f}x")
 print(f"CAGR: {stock1_CAGR*100:.0f}%")
 print(f"Max Drawdown: {stock1_max_drawdown*100:.0f}%")
 print(f"Volatility: {stock1_volatility*100:.0f}%")
 print(f"Sharpe Ratio: {stock1_sharpe_ratio:.0f}%")
-
+"""
 
 
 # Calculate stats for the portfolio
@@ -112,19 +122,50 @@ volatility = portfolio_value_df['daily_return'].std() * np.sqrt(252)
 # Sharpe Ratio (assuming risk-free rate of 0)
 sharpe_ratio = (CAGR - 0) / volatility
 
+"""
 print("\nPortfolio Stats")
 print(f"Total Return: {total_return:0.0f}x")
 print(f"CAGR: {CAGR[0]*100:0.0f}%")
 print(f"Max Drawdown: {max_drawdown*100:0.0f}%")
 print(f"Volatility: {volatility*100:0.0f}%")
 print(f"Sharpe Ratio: {sharpe_ratio.values[0]*100:0.0f}%")
+"""
 
-# Plot the portfolio value and the amounts of the two tickers
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(portfolio_value_df.index, portfolio_value_df['Portfolio Value'], label='Portfolio Value')
-#ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
-ax.set_xlabel('Date')
-ax.set_ylabel('Price')
-ax.legend()
+data = {
+    'Total Return': [stock1_total_return, total_return],
+    'CAGR': [stock1_CAGR, CAGR[0]],
+    'Max Drawdown': [stock1_max_drawdown, max_drawdown],
+    'Volatility': [stock1_volatility, volatility],
+    'Sharpe Ratio': [stock1_sharpe_ratio, sharpe_ratio.values[0]],
+}
+
+index = ['Stock', 'Stats']
+df = pd.DataFrame(data, index=index)
+
+# Apply formatting to the columns
+format_dict = {
+    'Total Return': '{:.0f}x',
+    'CAGR': '{:.0%}',
+    'Max Drawdown': '{:.0%}',
+    'Volatility': '{:.0%}',
+    'Sharpe Ratio': '{:.0f}%',
+}
+
+styled_table = df.style.format(format_dict)
+
+# Center the numbers and columns (excluding the first column with stat labels)
+styled_table = styled_table.set_properties(**{'text-align': 'center'})
+
+styled_table
+
+
+
+#CSV export
+# Export portfolio_value_df to a CSV file named 'portfolio_value.csv'
+portfolio_value_df.to_csv('portfolio_value.csv')
+
+# Export stock1_normalized to a CSV file named 'stock1_normalized.csv'
+stock1_normalized_df.to_csv('portfolio_value.csv')
+
 plt.show()
-
+print(df)
