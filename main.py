@@ -7,10 +7,11 @@ import datetime as dt
 
 today = dt.date.today()
 
+#initialize variable
 stock1 = 'TQQQ'
 stock2 = 'BIL'
-
 weight1 = 0.5
+
 weight2 = 1 - weight1
 rebalance_period = 30  # Number of weekdays between rebalancing
 
