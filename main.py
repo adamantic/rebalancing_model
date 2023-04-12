@@ -10,12 +10,12 @@ today = dt.date.today()
 # Initialize variables
 stock1 = 'TQQQ'
 stock2 = 'BIL'
-weight1 = 0.5
+weight1 = 0.8
 start_date = pd.Timestamp('2000-03-01')
 end_date = pd.Timestamp(today)
 
 weight2 = 1 - weight1
-rebalance_period = 5  # Number of weekdays between rebalancing
+rebalance_period = 1  # Number of weekdays between rebalancing
 
 tickers = [stock1, stock2]
 portfolio_weights = {stock1: weight1, stock2: weight2}
@@ -74,12 +74,18 @@ stock1_volatility = stock1_normalized_df['daily_return'].std() * np.sqrt(252)
 # Sharpe Ratio (assuming risk-free rate of 0)
 stock1_sharpe_ratio = (stock1_CAGR - 0) / stock1_volatility
 
+# Calculate total return for stock1
+initial_stock1_value = stock1_normalized.iloc[0]
+ending_stock1_value = stock1_normalized.iloc[-1]
+stock1_total_return = (ending_stock1_value / initial_stock1_value) - 1
+
 print(stock1, "Stats")
-print("Total Return: ")
-print("CAGR:", stock1_CAGR)
-print("Max Drawdown:", stock1_max_drawdown)
-print("Volatility:", stock1_volatility)
-print("Sharpe Ratio:", stock1_sharpe_ratio)
+print(f"Total Return: {stock1_total_return:.0f}x")
+print(f"CAGR: {stock1_CAGR*100:.0f}%")
+print(f"Max Drawdown: {stock1_max_drawdown*100:.0f}%")
+print(f"Volatility: {stock1_volatility*100:.0f}%")
+print(f"Sharpe Ratio: {stock1_sharpe_ratio:.0f}%")
+
 
 
 # Calculate stats for the portfolio
@@ -107,16 +113,16 @@ volatility = portfolio_value_df['daily_return'].std() * np.sqrt(252)
 sharpe_ratio = (CAGR - 0) / volatility
 
 print("\nPortfolio Stats")
-print("Total Return:", total_return)
-print("CAGR:", CAGR[0])
-print("Max Drawdown:", max_drawdown)
-print("Volatility:", volatility)
-print("Sharpe Ratio:", sharpe_ratio)
+print(f"Total Return: {total_return:0.0f}x")
+print(f"CAGR: {CAGR[0]*100:0.0f}%")
+print(f"Max Drawdown: {max_drawdown*100:0.0f}%")
+print(f"Volatility: {volatility*100:0.0f}%")
+print(f"Sharpe Ratio: {sharpe_ratio.values[0]*100:0.0f}%")
 
 # Plot the portfolio value and the amounts of the two tickers
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(portfolio_value_df.index, portfolio_value_df['Portfolio Value'], label='Portfolio Value')
-ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
+#ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
 ax.set_xlabel('Date')
 ax.set_ylabel('Price')
 ax.legend()
