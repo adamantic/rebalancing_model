@@ -6,19 +6,21 @@ import numpy as np
 import datetime as dt
 
 today = dt.date.today()
+top = '2021-12-01'
 
-#initialize variable
-stock1 = 'TQQQ'
+# Initialize variables
+stock1 = 'QQQ'
 stock2 = 'BIL'
-weight1 = 0.5
+weight1 = 0.99
+start_date = pd.Timestamp('2000-03-01')
+end_date = pd.Timestamp(today)
 
 weight2 = 1 - weight1
-rebalance_period = 30  # Number of weekdays between rebalancing
+rebalance_period = 5  # Number of weekdays between rebalancing
 
 tickers = [stock1, stock2]
 portfolio_weights = {stock1: weight1, stock2: weight2}
-start_date = pd.Timestamp('2012-01-01')
-end_date = pd.Timestamp(today)
+
 
 # Download historical data for tickers
 ohlc_data = yf.download(tickers, start_date, end_date)['Close']
@@ -48,6 +50,10 @@ for i in range(1, len(ohlc_data)):
 # Create a DataFrame with the portfolio value
 portfolio_value_df = pd.DataFrame(portfolio_value, index=ohlc_data.index, columns=['Portfolio Value'])
 
+# Calculate stock1 returns and normalize it to start at 100
+stock1_returns = (1 + ohlc_data[stock1].pct_change()).cumprod()
+stock1_normalized = initial_value * stock1_returns
+
 # Calculate CAGR
 years = (portfolio_value_df.index[-1] - portfolio_value_df.index[0]).days / 365
 CAGR = (portfolio_value_df.iloc[-1] / portfolio_value_df.iloc[0]) ** (1 / years) - 1
@@ -69,9 +75,11 @@ print("Max Drawdown:", max_drawdown)
 print("Volatility:", volatility)
 print("Sharpe Ratio:", sharpe_ratio)
 
+
 # Plot the portfolio value and the amounts of the two tickers
 fig, ax = plt.subplots(figsize=(10, 6))
 ax.plot(portfolio_value_df.index, portfolio_value_df['Portfolio Value'], label='Portfolio Value')
+#ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
 ax.set_xlabel('Date')
 ax.set_ylabel('Price')
 ax.legend()
