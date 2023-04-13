@@ -1,3 +1,5 @@
+pip install flask flask-cors
+
 import yfinance as yf
 import pandas as pd
 import seaborn as sns
