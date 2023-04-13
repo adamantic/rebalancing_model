@@ -12,13 +12,16 @@ today = dt.date.today()
 
 # Initialize variables
 stock1 = 'TQQQ'
+#capitalize stock1
+stock1 = stock1.upper()
 stock2 = 'BIL'
-weight1 = 0.66
+stock2 = stock2.upper()
+weight1 = 0.5
 start_date = pd.Timestamp('2000-03-01')
 end_date = pd.Timestamp(today)
 
 weight2 = 1 - weight1
-rebalance_period = 1  # Number of weekdays between rebalancing
+rebalance_period = 10  # Number of weekdays between rebalancing
 
 tickers = [stock1, stock2]
 portfolio_weights = {stock1: weight1, stock2: weight2}
