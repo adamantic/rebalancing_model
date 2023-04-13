@@ -4,13 +4,16 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 import numpy as np
 import datetime as dt
+import plotly.graph_objs as go
+import plotly.offline as pyo
+
 
 today = dt.date.today()
 
 # Initialize variables
 stock1 = 'TQQQ'
 stock2 = 'BIL'
-weight1 = 0.75
+weight1 = 0.66
 start_date = pd.Timestamp('2000-03-01')
 end_date = pd.Timestamp(today)
 
@@ -165,7 +168,32 @@ styled_table
 portfolio_value_df.to_csv('portfolio_value.csv')
 
 # Export stock1_normalized to a CSV file named 'stock1_normalized.csv'
-stock1_normalized_df.to_csv('portfolio_value.csv')
+stock1_normalized_df.to_csv('stock1_normalized.csv')
 
 plt.show()
 print(df)
+
+portfolio_trace = go.Scatter(x=portfolio_value_df.index, y=portfolio_value_df['Portfolio Value'], name='Portfolio Value')
+#stock1_trace = go.Scatter(x=stock1_normalized.index, y=stock1_normalized, name=stock1)
+trace2 = go.Scatter(x=[], y=[], name=stock2)
+
+fig = go.Figure(data=[portfolio_trace, trace2])
+
+fig.update_layout(
+    title='Portfolio Value and Ticker Amounts',
+    paper_bgcolor='white',
+xaxis=dict(title='Date'),
+    yaxis=dict(title='Price'),
+    xaxis_rangeslider_visible=True,
+    xaxis_rangeselector=dict(
+        buttons=list([
+            dict(count=1, label="1m", step="month", stepmode="backward"),
+            dict(count=6, label="6m", step="month", stepmode="backward"),
+            dict(count=1, label="YTD", step="year", stepmode="todate"),
+            dict(count=1, label="1y", step="year", stepmode="backward"),
+            dict(step="all")
+        ])
+    )
+)
+pyo.plot(fig, filename='portfolio.html')
+
