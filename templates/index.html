@@ -7,71 +7,92 @@
     <!-- Add Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Add Highcharts -->
-    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <link href="templates/styles.css" rel="stylesheet">
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
+
+
+
     <!-- Add Alpine.js for interactivity -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.9.2/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100">
-<div x-data="app()" class="container mx-auto px-4 py-8">
-    <!-- Add the form inside the div with x-data="app()" -->
-    <form @submit.prevent="submitForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="stock1">
-                Stock 1 Ticker
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="stock1" type="text" placeholder="BIL" x-model="stock1">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="stock2">
-                Stock 2 Ticker
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="stock2" type="text" placeholder="QQQ" x-model="stock2">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="start_date">
-                Start Date
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="start_date" type="date" x-model="start_date">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="end_date">
-                End Date
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="end_date" type="date" x-model="end_date">
-        </div>
+<body class="bg-white">
 
-        <div class="mb-6">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="weight1">
-                Initial Weight (Stock 1)
-            </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                   id="weight1" type="number" step="0.01" min="0" max="1" placeholder="0.5" x-model="weight1">
-        </div>
-        <div class="flex items-center justify-between">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    type="submit">
-                Submit
-            </button>
-        </div>
-        <div class="mb-6">
-            <input type="checkbox" id="toggle-stock1" x-model="showStock1" x-watch="toggleSeries()" checked/>
-            <label for="toggle-stock1" class="text-gray-700 text-sm font-bold">Show Stock 1</label>
-        </div>
-        <div class="mb-6">
-            <input type="checkbox" id="toggle-portfolio" x-model="showPortfolio" x-watch="toggleSeries()" checked/>
-            <label for="toggle-portfolio" class="text-gray-700 text-sm font-bold">Show Portfolio</label>
-        </div>
+<header class="bg-gray-800 py-6">
+  <nav class="flex items-center justify-between px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="flex items-center flex-1">
+      <a href="/" class="text-white text-2xl font-semibold">
+        My App
+      </a>
+    </div>
+    <div class="flex items-center">
+      <a href="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+        Home
+      </a>
+      <a href="/about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+        About
+      </a>
+      <a href="/contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+        Contact
+      </a>
+    </div>
+  </nav>
+</header>
 
-    </form>
-
-    <!-- Add the chart container -->
-    <div id="chart-container" style="height: 400px;"></div>
-
+<div class="flex flex-row">
+    <!-- Add the form container -->
+    <div class="w-1/4 p-4 m-4">
+        <form x-data="app()" @submit.prevent="submitForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="stock1">
+                    Stock 1 Ticker
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="stock1" type="text" placeholder="BIL" x-model="stock1">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="stock2">
+                    Stock 2 Ticker
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="stock2" type="text" placeholder="QQQ" x-model="stock2">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="start_date">
+                    Start Date
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="start_date" type="date" x-model="start_date">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="end_date">
+                    End Date
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="end_date" type="date" x-model="end_date">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="weight1">
+                    Initial Weight (Stock 1)
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="weight1" type="number" step="0.01" min="0" max="1" placeholder="0.5" x-model="weight1">
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="submit">
+                    Submit
+                </button>
+            </div>
+        </form>
+        </div>
+  <!-- Add the chart container -->
+    <div class="w-3/4 p-4 m-4">
+    <div id="chart-container" style="height:600px"></div>
+  </div>
 </div>
+
+
 
 <script>
     function app() {
@@ -104,49 +125,27 @@
                     body: JSON.stringify(requestData),
                 })
                     .then((response) => {
-                        console.log('Raw response received:', response);
-
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
                     })
-
                     .then((jsonData) => {
-                        console.log('JSON data received:', jsonData);
                         this.renderChart(jsonData);
                     })
                     .catch((error) => {
                         console.error('Error fetching data:', error);
                     });
             },
-
             renderChart(jsonData) {
-
                 // Parse JSON data
                 const data = JSON.parse(jsonData);
                 const portfolioValueData = data.data.map(row => [new Date(row[0]).getTime(), row[1]]);
                 const stock1Data = data.data.map(row => [new Date(row[0]).getTime(), row[5]]);
 
-                const seriesData = [];
-
-
-                if (this.showPortfolio) {
-                    seriesData.push({
-                        name: 'Portfolio Value',
-                        data: portfolioValueData,
-                    });
-                }
-
-                if (this.showStock1) {
-                    seriesData.push({
-                        name: this.stock1,
-                        data: stock1Data,
-                    });
-                }
 
                 if (!this.chart) {
-                    this.chart = Highcharts.stockChart('chart-container', {
+                    this.chart = Highcharts.chart('chart-container', {
                         chart: {
                             type: 'line',
                         },
@@ -161,8 +160,19 @@
                                 text: 'Price',
                             },
                         },
-                        series: seriesData,
+                        series: [
+                            {
+                                name: 'Portfolio Value',
+                                data: portfolioValueData,
+                            },
+                            {
+                                name: this.stock1,
+                                data: stock1Data,
+                            },
+                        ],
                         rangeSelector: {
+                                enabled: true,
+
                             buttons: [
                                 {
                                     type: 'month',
@@ -195,26 +205,36 @@
                             ],
                             selected: 5,
                         },
+                        navigator: {
+    enabled: true
+}
                     });
                 } else {
+                    const series = [];
+                    if (this.showPortfolio) {
+                        series.push({
+                            name: 'Portfolio Value',
+                            data: portfolioValueData,
+                        });
+                    }
+                    if (this.showStock1) {
+                        series.push({
+                            name: 'Stock 1',
+                            data: stock1Data,
+                        });
+                    }
+
                     this.chart.update({
-                        series: seriesData,
+                        series: series,
                     });
                 }
+
             },
-            toggleSeries() {
-                if (this.chart) {
-                    for (let i = 0; i < this.chart.series.length; i++) {
-                        if (this.chart.series[i].name === 'Portfolio Value') {
-                            this.chart.series[i].update({visible: this.showPortfolio});
-                        } else if (this.chart.series[i].name === this.stock1) {
-                            this.chart.series[i].update({visible: this.showStock1});
-                        }
-                    }
-                }
-            },
-        };
+
+
+        }
     }
+
 </script>
 
 

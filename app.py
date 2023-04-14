@@ -82,8 +82,6 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
         # Rebalance the portfolio based on the rebalance_dates
         if row.name in rebalance_dates:
             for ticker in tickers:
-                print("row[ticker]:", row[ticker])
-
                 current_weights[ticker] = (float(total_value) * float(portfolio_weights[ticker])) / float(row[ticker])
 
     # Create a DataFrame with the portfolio value
@@ -121,7 +119,6 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
 
     #normalized price change of stock1 as a column in the portfolio_value_df
     stock1_normalized_df['stock1_normalized'] = stock1_normalized_df[stock1]
-    print('stock1_normalized_df[stock1_normalized]',stock1_normalized_df['stock1_normalized'])
 
     # Sharpe Ratio (assuming risk-free rate of 0)
     stock1_sharpe_ratio = (stock1_CAGR - 0) / stock1_volatility
@@ -180,7 +177,6 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
 
     styled_table
     portfolio_value_df['stock1'] = stock1_normalized_df['stock1_normalized']
-    print(portfolio_value_df)
 
     # Save portfolio_value_df as a CSV string
     portfolio_value_csv = portfolio_value_df.to_csv()
@@ -188,7 +184,7 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     # Export stock1_normalized to a CSV file named 'stock1_normalized.csv'
     stock1_normalized_df.to_csv('stock1_normalized.csv')
 
-    #print(df)
+    print(df)
 
     portfolio_value_df.index = portfolio_value_df.index.strftime('%Y-%m-%d')
     portfolio_value_df.reset_index(inplace=True)
