@@ -6,6 +6,7 @@ import yfinance as yf
 import pandas as pd
 import seaborn as sns
 import matplotlib
+
 matplotlib.use('Agg')  # Use the Agg backend
 from matplotlib import pyplot as plt
 import numpy as np
@@ -14,14 +15,14 @@ import plotly.graph_objs as go
 import plotly.offline as pyo
 import json
 
-
-
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 today = dt.date.today()
 stock1 = 'TQQQ'
@@ -42,9 +43,10 @@ def handle_get_rebalancing_data():
     return jsonify(result)
 
 
-def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: str, end_date: str, rebalance_period: int = 10):
+def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: str, end_date: str,
+                         rebalance_period: int = 10):
     print("get_rebalancing_data() called")
-    #capitalize stock1
+    # capitalize stock1
     stock1 = stock1.upper()
     stock2 = stock2.upper()
     weight1 = weight1
@@ -94,11 +96,10 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     # Plot the portfolio value and the amounts of the two tickers
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(portfolio_value_df.index, portfolio_value_df['Portfolio Value'], label='Portfolio Value')
-    #ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
+    # ax.plot(stock1_normalized.index, stock1_normalized, label=stock1)  # This line plots stock1_normalized
     ax.set_xlabel('Date')
     ax.set_ylabel('Price')
     ax.legend()
-
 
     # Calculate Stock1 stats
     stock1_normalized = stock1_normalized.iloc[1:]  # Drop the first row to avoid division by zero
@@ -110,14 +111,15 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     # Max Drawdown
     stock1_normalized_df = pd.DataFrame(stock1_normalized)
     stock1_normalized_df['max'] = stock1_normalized_df[stock1].cummax()
-    stock1_normalized_df['drawdown'] = (stock1_normalized_df[stock1] - stock1_normalized_df['max']) / stock1_normalized_df['max']
+    stock1_normalized_df['drawdown'] = (stock1_normalized_df[stock1] - stock1_normalized_df['max']) / \
+                                       stock1_normalized_df['max']
     stock1_max_drawdown = stock1_normalized_df['drawdown'].min()
 
     # Volatility (annualized)
     stock1_normalized_df['daily_return'] = stock1_normalized_df[stock1].pct_change()
     stock1_volatility = stock1_normalized_df['daily_return'].std() * np.sqrt(252)
 
-    #normalized price change of stock1 as a column in the portfolio_value_df
+    # normalized price change of stock1 as a column in the portfolio_value_df
     stock1_normalized_df['stock1_normalized'] = stock1_normalized_df[stock1]
 
     # Sharpe Ratio (assuming risk-free rate of 0)
@@ -140,7 +142,8 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
 
     # Max Drawdown
     portfolio_value_df['max'] = portfolio_value_df['Portfolio Value'].cummax()
-    portfolio_value_df['drawdown'] = (portfolio_value_df['Portfolio Value'] - portfolio_value_df['max']) / portfolio_value_df['max']
+    portfolio_value_df['drawdown'] = (portfolio_value_df['Portfolio Value'] - portfolio_value_df['max']) / \
+                                     portfolio_value_df['max']
     max_drawdown = portfolio_value_df['drawdown'].min()
 
     # Volatility (annualized)
@@ -159,7 +162,7 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     }
 
     index = ['Stock', 'Stats']
-    df = pd.DataFrame(data, index=index)
+    return_data_df = pd.DataFrame(data, index=index)
 
     # Apply formatting to the columns
     format_dict = {
@@ -170,7 +173,7 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
         'Sharpe Ratio': '{:.0f}%',
     }
 
-    styled_table = df.style.format(format_dict)
+    styled_table = return_data_df.style.format(format_dict)
 
     # Center the numbers and columns (excluding the first column with stat labels)
     styled_table = styled_table.set_properties(**{'text-align': 'center'})
@@ -184,30 +187,14 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     # Export stock1_normalized to a CSV file named 'stock1_normalized.csv'
     stock1_normalized_df.to_csv('stock1_normalized.csv')
 
-    print(df)
+    print(return_data_df)
 
     portfolio_value_df.index = portfolio_value_df.index.strftime('%Y-%m-%d')
     portfolio_value_df.reset_index(inplace=True)
     portfolio_value_df.rename(columns={'index': 'Date'}, inplace=True)
-
-    # Return the result as a dictionary
-    result = {
-        'portfolio_value': portfolio_value_df.to_dict(orient='list'),
-        'stock1_normalized': stock1_normalized_df.to_dict(orient='list'),
-        'table': df.to_dict(),
-        'portfolio_value_csv': portfolio_value_csv
-    }
-
-    # Convert pandas dataframes to JSON
-    result['portfolio_value'] = json.loads(json.dumps(result['portfolio_value']))
-    result['stock1_normalized'] = json.loads(json.dumps(result['stock1_normalized']))
-    result['table'] = json.loads(json.dumps(result['table']))
 
     return portfolio_value_df.to_json(orient='split', index=False)
 
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
-
-
-
