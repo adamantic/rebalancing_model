@@ -40,7 +40,7 @@ def handle_get_rebalancing_data():
     start_date = data['start_date']
     end_date = data['end_date']
     result = get_rebalancing_data(stock1, stock2, weight1, start_date, end_date)
-    return jsonify(result)
+    return jsonify(result[0])
 
 
 def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: str, end_date: str,
@@ -193,7 +193,8 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     portfolio_value_df.reset_index(inplace=True)
     portfolio_value_df.rename(columns={'index': 'Date'}, inplace=True)
 
-    return portfolio_value_df.to_json(orient='split', index=False)
+    return portfolio_value_df.to_json(orient='split', index=False), return_data_df
+
 
 
 if __name__ == "__main__":
