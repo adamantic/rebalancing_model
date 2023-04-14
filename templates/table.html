@@ -1,0 +1,27 @@
+<div class="p-4 bg-gray-200 rounded-lg shadow-lg" id="table-container">
+  <table class="table w-full divide-y divide-gray-200 shadow-sm sm:rounded-lg">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Total Return</th>
+        <th>CAGR</th>
+        <th>Max Drawdown</th>
+        <th>Volatility</th>
+        <th>Sharpe Ratio</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for index, row in return_data_df.iterrows() %}
+        <tr>
+          <th>{{ index }}</th>
+          <td class="text-center">{{ '{:.0f}x'.format(row['Total Return']) }}</td>
+          <td class="text-center">{{ '{:.0%}'.format(row['CAGR']) }}</td>
+          <td class="text-center">{{ '{:.0%}'.format(row['Max Drawdown']) }}</td>
+          <td class="text-center">{{ '{:.0%}'.format(row['Volatility']) }}</td>
+          <td class="text-center">{{ '{:.0f}%'.format(row['Sharpe Ratio']) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+

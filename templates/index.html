@@ -7,10 +7,9 @@
     <!-- Add Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Add Highcharts -->
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css">
-
 
 
     <!-- Add Alpine.js for interactivity -->
@@ -19,24 +18,24 @@
 <body class="bg-white">
 
 <header class="bg-gray-800 py-6">
-  <nav class="flex items-center justify-between px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-    <div class="flex items-center flex-1">
-      <a href="/" class="text-white text-2xl font-semibold">
-        My App
-      </a>
-    </div>
-    <div class="flex items-center">
-      <a href="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-        Home
-      </a>
-      <a href="/about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-        About
-      </a>
-      <a href="/contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-        Contact
-      </a>
-    </div>
-  </nav>
+    <nav class="flex items-center justify-between px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="flex items-center flex-1">
+            <a href="/" class="text-white text-2xl font-semibold">
+                My App
+            </a>
+        </div>
+        <div class="flex items-center">
+            <a href="/" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                Home
+            </a>
+            <a href="/about" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                About
+            </a>
+            <a href="/contact" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                Contact
+            </a>
+        </div>
+    </nav>
 </header>
 
 <div class="flex flex-row">
@@ -83,15 +82,63 @@
                         type="submit">
                     Submit
                 </button>
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="button"
+                        @click="getReturnData">
+                    Calculate return data
+                </button>
+
+
             </div>
         </form>
-        </div>
-  <!-- Add the chart container -->
+    </div>
+    <!-- Add the chart container -->
     <div class="w-3/4 p-4 m-4">
-    <div id="chart-container" style="height:600px"></div>
-  </div>
-</div>
+        <div id="chart-container" style="height:600px"></div>
 
+        <div id="table-container">
+            {{ table_html|safe }}
+        </div>
+
+
+        <!-- Table will be rendered here -->
+    </div>
+
+</div>
+</div>
+<script>
+    let requestData;
+
+    function getReturnData() {
+        const stock1 = document.getElementById('stock1').value;
+        const stock2 = document.getElementById('stock2').value;
+        const weight1 = document.getElementById('weight1').value;
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+
+        requestData = {
+            stock1: stock1,
+            stock2: stock2,
+            weight1: weight1,
+            start_date: startDate,
+            end_date: endDate
+        };
+
+        fetch('/get_return_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => response.text())
+            .then(html => {
+                console.log("HTML response:", html);
+                document.getElementById("table-container").innerHTML = html;
+            })
+            .catch(error => console.error(error));
+    }
+</script>
 
 
 <script>
@@ -171,7 +218,7 @@
                             },
                         ],
                         rangeSelector: {
-                                enabled: true,
+                            enabled: true,
 
                             buttons: [
                                 {
@@ -206,8 +253,8 @@
                             selected: 5,
                         },
                         navigator: {
-    enabled: true
-}
+                            enabled: true
+                        }
                     });
                 } else {
                     const series = [];

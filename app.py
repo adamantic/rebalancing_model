@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, Response, send_file
+from flask import Flask, jsonify, request, render_template, Response, send_file,render_template_string
 import io
 from flask_cors import CORS
 from traceback import print_exc
@@ -42,6 +42,27 @@ def handle_get_rebalancing_data():
     result = get_rebalancing_data(stock1, stock2, weight1, start_date, end_date)
     return jsonify(result[0])
 
+@app.route('/get_return_data', methods=['POST'])
+def handle_get_return_data():
+    data = request.get_json()
+    stock1 = data.get('stock1')
+    stock2 = data.get('stock2')
+    weight1 = data.get('weight1')
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+
+    # Check if all required data is present in the request
+    if not all([stock1, stock2, weight1, start_date, end_date]):
+        return 'Error: Missing data in the request', 400
+
+    result = get_rebalancing_data(stock1, stock2, weight1, start_date, end_date)
+    return_data_df = result[1]
+
+    # Return the original DataFrame object
+    return render_template('table.html', return_data_df=return_data_df)
+
+
+
 
 def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: str, end_date: str,
                          rebalance_period: int = 10):
@@ -64,7 +85,7 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     ohlc_data = yf.download(tickers, start_date, end_date)['Close']
     ohlc_data = ohlc_data.dropna()  # Remove any rows with missing data
 
-    initial_value = 100
+    initial_value = 1000
     portfolio_value = [initial_value]
 
     # Initialize the starting weights based on the initial portfolio value
@@ -164,21 +185,20 @@ def get_rebalancing_data(stock1: str, stock2: str, weight1: float, start_date: s
     index = ['Stock', 'Stats']
     return_data_df = pd.DataFrame(data, index=index)
 
-    # Apply formatting to the columns
-    format_dict = {
+    formats = {
         'Total Return': '{:.0f}x',
         'CAGR': '{:.0%}',
         'Max Drawdown': '{:.0%}',
         'Volatility': '{:.0%}',
-        'Sharpe Ratio': '{:.0f}%',
+        'Sharpe Ratio': '{:.0f}%'
     }
 
-    styled_table = return_data_df.style.format(format_dict)
+    # apply the formats to the DataFrame
+    styled_return_data_df = return_data_df.style.format(formats)
 
-    # Center the numbers and columns (excluding the first column with stat labels)
-    styled_table = styled_table.set_properties(**{'text-align': 'center'})
+    # display the styled DataFrame
+    styled_return_data_df
 
-    styled_table
     portfolio_value_df['stock1'] = stock1_normalized_df['stock1_normalized']
 
     # Save portfolio_value_df as a CSV string
