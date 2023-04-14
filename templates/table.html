@@ -2,26 +2,25 @@
   <table class="table w-full divide-y divide-gray-200 shadow-sm sm:rounded-lg">
     <thead>
       <tr>
-        <th></th>
-        <th>Total Return</th>
-        <th>CAGR</th>
-        <th>Max Drawdown</th>
-        <th>Volatility</th>
-        <th>Sharpe Ratio</th>
+        <th class="px-4 py-2"></th>
+        <th class="px-4 py-2">Total Return</th>
+        <th class="px-4 py-2">CAGR</th>
+        <th class="px-4 py-2">Max Drawdown</th>
+        <th class="px-4 py-2">Volatility</th>
+        <th class="px-4 py-2">Sharpe Ratio</th>
       </tr>
     </thead>
     <tbody>
       {% for index, row in return_data_df.iterrows() %}
         <tr>
-          <th>{{ index }}</th>
-          <td class="text-center">{{ '{:.0f}x'.format(row['Total Return']) }}</td>
-          <td class="text-center">{{ '{:.0%}'.format(row['CAGR']) }}</td>
-          <td class="text-center">{{ '{:.0%}'.format(row['Max Drawdown']) }}</td>
-          <td class="text-center">{{ '{:.0%}'.format(row['Volatility']) }}</td>
-          <td class="text-center">{{ '{:.0f}%'.format(row['Sharpe Ratio']) }}</td>
+          <th class="border px-4 py-2">{{ index }}</th>
+          <td class="border px-4 py-2 text-center">{{ '{:.0f}x'.format(row['Total Return']) }}</td>
+          <td class="border px-4 py-2 text-center">{{ '{:.0%}'.format(row['CAGR']) }}</td>
+          <td class="border px-4 py-2 text-center">{{ '{:.0%}'.format(row['Max Drawdown']) }}</td>
+          <td class="border px-4 py-2 text-center">{{ '{:.0%}'.format(row['Volatility']) }}</td>
+          <td class="border px-4 py-2 text-center">{{ '{:.2f}'.format(row['Sharpe Ratio']) }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
-
